@@ -21,7 +21,7 @@ public class Pawn extends AbstractPiece {
         Optional.ofNullable(this.getStandardMove(from, board))
                 .ifPresent(allowedMoves::add);
         allowedMoves.addAll(this.getAttackingMoves(from, board));
-        Optional.ofNullable(this.getDoubleMove(from))
+        Optional.ofNullable(this.getDoubleMove(from, board))
                 .ifPresent(allowedMoves::add);
         return allowedMoves;
     }
@@ -47,14 +47,19 @@ public class Pawn extends AbstractPiece {
         }
     }
 
-    private Move getDoubleMove(Coordinates currentSquare) {
+    private Move getDoubleMove(Coordinates currentSquare, Board board) {
         if (this.colour == PlayerColour.WHITE && currentSquare.getRow() == 6) {
-            return new Move(currentSquare, currentSquare.plus(-2, 0));
+            Coordinates destination = currentSquare.plus(-2, 0);
+            if (board.get(destination) == null) {
+                return new Move(currentSquare, currentSquare.plus(-2, 0));
+            }
         } else if (this.colour == PlayerColour.BLACK && currentSquare.getRow() == 1) {
-            return new Move(currentSquare, currentSquare.plus(2, 0));
-        } else {
-            return null;
+            Coordinates destination = currentSquare.plus(2, 0);
+            if (board.get(destination) == null) {
+                return new Move(currentSquare, currentSquare.plus(2, 0));
+            }
         }
+        return null;
     }
 
     private List<Move> getAttackingMoves(Coordinates currentSquare, Board board) {
