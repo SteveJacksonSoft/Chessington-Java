@@ -49,4 +49,10 @@ public class Board {
     public void placePiece(Coordinates coords, Piece piece) {
         board[coords.getRow()][coords.getCol()] = piece;
     }
+
+    public boolean contains(Coordinates coords) {
+        int row = coords.getRow();
+        int col = coords.getCol();
+        return 0 <= row && row < 8 && 0 <= col && col < 8;
+    }
 }

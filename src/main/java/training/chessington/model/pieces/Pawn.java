@@ -19,8 +19,10 @@ public class Pawn extends AbstractPiece {
     public List<Move> getAllowedMoves(Coordinates from, Board board) {
         List<Move> allowedMoves = new ArrayList<>();
         Coordinates[] squaresInFront = this.squaresInFront(from);
-        if (board.get(squaresInFront[0]) == null) {
-            allowedMoves.add(new Move(from, squaresInFront[0]));
+        if (board.contains(squaresInFront[0])) {
+            if (board.get(squaresInFront[0]) == null) {
+                allowedMoves.add(new Move(from, squaresInFront[0]));
+            }
         }
         if ((this.colour == PlayerColour.WHITE && from.getRow() == 6)
                 || (this.colour == PlayerColour.BLACK && from.getRow() == 1)) {
