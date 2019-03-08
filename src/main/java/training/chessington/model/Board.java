@@ -50,4 +50,44 @@ public class Board {
         board[coords.getRow()][coords.getCol()] = piece;
     }
 
+    public boolean moveIsBlocked(Move move) {
+        
+        int fromRow = move.getFrom().getRow();
+        int fromCol = move.getFrom().getCol();
+        int toRow = move.getTo().getRow();
+        int toCol = move.getTo().getCol();
+        
+        boolean isHorizontal = fromRow == toRow;
+        boolean isVertical = fromCol == toCol;
+        boolean isDiagonal = (fromRow - toRow) == (fromCol - toCol);
+        
+        if (isHorizontal) {
+            return linearMoveIsBlocked(fromRow, fromCol, toCol, false);
+        } else if (isVertical) {
+            return linearMoveIsBlocked(fromCol, fromRow, toRow, true);
+        }
+        // else if (isDiagonal) {...}
+        return false;
+    }
+    
+    private boolean linearMoveIsBlocked(int lineIndex, int fromIndex, int toIndex, boolean moveIsVertical) {
+        for (int spaceIndex = Math.min(fromIndex + 1, toIndex); spaceIndex <= Math.max(toIndex, fromIndex - 1); spaceIndex++) {
+            if (moveIsVertical) {
+                if (this.get(new Coordinates(spaceIndex, lineIndex)) != null) {
+                    return true;
+                }
+            } else {
+                if (this.get(new Coordinates(lineIndex, spaceIndex)) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean contains(Coordinates position) {
+        int row = position.getRow();
+        int col = position.getCol();
+        return 0 <= row && row < 8 && 0 <= col && col < 8;
+    }
 }

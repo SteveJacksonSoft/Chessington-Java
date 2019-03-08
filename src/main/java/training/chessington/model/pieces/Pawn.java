@@ -48,18 +48,22 @@ public class Pawn extends AbstractPiece {
     }
 
     private Move getDoubleMove(Coordinates currentSquare, Board board) {
+        Coordinates destination;
+
         if (this.colour == PlayerColour.WHITE && currentSquare.getRow() == 6) {
-            Coordinates destination = currentSquare.plus(-2, 0);
-            if (board.get(destination) == null) {
-                return new Move(currentSquare, currentSquare.plus(-2, 0));
-            }
+            destination = currentSquare.plus(-2, 0);
         } else if (this.colour == PlayerColour.BLACK && currentSquare.getRow() == 1) {
-            Coordinates destination = currentSquare.plus(2, 0);
-            if (board.get(destination) == null) {
-                return new Move(currentSquare, currentSquare.plus(2, 0));
-            }
+            destination = currentSquare.plus(2, 0);
+        } else { // Not on starting line
+            return null;
         }
-        return null;
+
+        Move doubleMove = new Move(currentSquare, destination);
+        if (!board.moveIsBlocked(doubleMove)) {
+            return doubleMove;
+        } else {
+            return null;
+        }
     }
 
     private List<Move> getAttackingMoves(Coordinates currentSquare, Board board) {
@@ -78,10 +82,7 @@ public class Pawn extends AbstractPiece {
 
     private boolean squareContainsEnemy(Coordinates square, Board board) throws IndexOutOfBoundsException {
         return Optional.ofNullable(board.get(square))
-                .map(piece ->
-                        (piece.getColour() == PlayerColour.WHITE && this.colour == PlayerColour.BLACK) ||
-                                (piece.getColour() == PlayerColour.BLACK && this.colour == PlayerColour.WHITE)
-                )
+                .map(piece -> piece.getColour() != this.colour)
                 .orElse(false);
     }
 }

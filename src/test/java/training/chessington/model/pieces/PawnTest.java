@@ -106,6 +106,40 @@ public class PawnTest {
     }
 
     @Test
+    public void whitePawnCannotMoveUpTwoSquaresIfPathBlocked() {
+
+        Board board = Board.empty();
+        Piece pawn = new Pawn(PlayerColour.WHITE);
+        Piece rook = new Rook(PlayerColour.BLACK);
+        Coordinates pawnPos = new Coordinates(6,2);
+        Coordinates rookPos = new Coordinates(5, 2);
+        board.placePiece(pawnPos, pawn);
+        board.placePiece(rookPos, rook);
+
+        List<Move> moves = pawn.getAllowedMoves(pawnPos, board);
+
+        assertThat(moves).doesNotContain(new Move(pawnPos, new Coordinates(4, 2)));
+
+    }
+
+    @Test
+    public void blackPawnCannotMoveDownTwoSquaresIfPathBlocked() {
+
+        Board board = Board.empty();
+        Piece pawn = new Pawn(PlayerColour.BLACK);
+        Piece rook = new Rook(PlayerColour.WHITE);
+        Coordinates pawnPos = new Coordinates(1,2);
+        Coordinates rookPos = new Coordinates(2, 2);
+        board.placePiece(pawnPos, pawn);
+        board.placePiece(rookPos, rook);
+
+        List<Move> moves = pawn.getAllowedMoves(pawnPos, board);
+
+        assertThat(moves).doesNotContain(new Move(pawnPos, new Coordinates(3, 2)));
+
+    }
+
+    @Test
     public void whitePawnCannotMoveUpTwoSquaresIfAlreadyMoved() {
         // Arrange
         Board board = Board.empty();
