@@ -104,4 +104,34 @@ public class KnightTest {
         }
     }
 
+    @Test
+    public void knightCannotMoveToSquareOccupiedBySameColourPiece() {
+        Board board = Board.empty();
+        Piece knight = new Knight(PlayerColour.WHITE);
+        Coordinates knightPosition = new Coordinates(0,6);
+        Piece pawn = new Pawn(PlayerColour.WHITE);
+        Coordinates pawnPosition = new Coordinates(2,5);
+        board.placePiece(knightPosition, knight);
+        board.placePiece(pawnPosition, pawn);
+
+        List<Move> moves = knight.getAllowedMoves(knightPosition, board);
+
+        assertThat(moves).doesNotContain(new Move(knightPosition, pawnPosition));
+    }
+
+    @Test
+    public void knightCannotMoveToSquareOccupiedByDifferentColourPiece() {
+        Board board = Board.empty();
+        Piece knight = new Knight(PlayerColour.WHITE);
+        Coordinates knightPosition = new Coordinates(4,2);
+        Piece pawn = new Pawn(PlayerColour.BLACK);
+        Coordinates pawnPosition = new Coordinates(5,0);
+        board.placePiece(knightPosition, knight);
+        board.placePiece(pawnPosition, pawn);
+
+        List<Move> moves = knight.getAllowedMoves(knightPosition, board);
+
+        assertThat(moves).contains(new Move(knightPosition, pawnPosition));
+    }
+
 }

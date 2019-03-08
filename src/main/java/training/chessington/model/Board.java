@@ -2,6 +2,8 @@ package training.chessington.model;
 
 import training.chessington.model.pieces.*;
 
+import java.util.Optional;
+
 public class Board {
 
     private Piece[][] board = new Piece[8][8];
@@ -69,7 +71,7 @@ public class Board {
         // else if (isDiagonal) {...}
         return false;
     }
-    
+
     private boolean linearMoveIsBlocked(int lineIndex, int fromIndex, int toIndex, boolean moveIsVertical) {
         for (int spaceIndex = Math.min(fromIndex + 1, toIndex); spaceIndex <= Math.max(toIndex, fromIndex - 1); spaceIndex++) {
             if (moveIsVertical) {
@@ -89,5 +91,17 @@ public class Board {
         int row = position.getRow();
         int col = position.getCol();
         return 0 <= row && row < 8 && 0 <= col && col < 8;
+    }
+
+    public boolean squareContainsEnemy(Coordinates square, PlayerColour colour) throws IndexOutOfBoundsException {
+        return Optional.ofNullable(get(square))
+                .map(piece -> piece.getColour() != colour)
+                .orElse(false);
+    }
+
+    public boolean squareContainsAlly(Coordinates square, PlayerColour colour) throws IndexOutOfBoundsException {
+        return Optional.ofNullable(get(square))
+                .map(piece -> piece.getColour() == colour)
+                .orElse(false);
     }
 }
