@@ -34,32 +34,6 @@ public class Pawn extends AbstractPiece {
         }
     }
 
-    private List<Move> getAttackingMoves(Coordinates currentSquare, Board board) {
-        List<Move> allowedMoves = new ArrayList<>();
-        Coordinates squareInFront = this.nextSquareForward(currentSquare);
-        try {
-            Optional.ofNullable(board.get(squareInFront.plus(0,1)))
-                    .ifPresent(piece -> {
-                        if (piece.getColour() == PlayerColour.WHITE && this.colour == PlayerColour.BLACK) {
-                            allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, 1)));
-                        }
-                        if (piece.getColour() == PlayerColour.BLACK && this.colour == PlayerColour.WHITE) {
-                            allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, 1)));
-                        }
-                    });
-            Optional.ofNullable(board.get(squareInFront.plus(0,-1)))
-                    .ifPresent(piece -> {
-                        if (piece.getColour() == PlayerColour.WHITE && this.colour == PlayerColour.BLACK) {
-                            allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, -1)));
-                        }
-                        if (piece.getColour() == PlayerColour.BLACK && this.colour == PlayerColour.WHITE) {
-                            allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, -1)));
-                        }
-                    });
-        } catch (IndexOutOfBoundsException e) {}
-        return allowedMoves;
-    }
-
     private Move getStandardMove(Coordinates currentSquare, Board board) {
         try {
             Coordinates squareInFront = this.nextSquareForward(currentSquare);
@@ -83,4 +57,26 @@ public class Pawn extends AbstractPiece {
         }
     }
 
+    private List<Move> getAttackingMoves(Coordinates currentSquare, Board board) {
+        List<Move> allowedMoves = new ArrayList<>();
+        Coordinates squareInFront = this.nextSquareForward(currentSquare);
+        try {
+            if (this.squareContainsEnemy(squareInFront.plus(0,1), board)) {
+                allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, 1)));
+            }
+            if (this.squareContainsEnemy(squareInFront.plus(0,-1), board)) {
+                allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, -1)));
+            }
+        } catch (IndexOutOfBoundsException e) {}
+        return allowedMoves;
+    }
+
+    private boolean squareContainsEnemy(Coordinates square, Board board) throws IndexOutOfBoundsException {
+        return Optional.ofNullable(board.get(square))
+                .map(piece ->
+                        (piece.getColour() == PlayerColour.WHITE && this.colour == PlayerColour.BLACK) ||
+                                (piece.getColour() == PlayerColour.BLACK && this.colour == PlayerColour.WHITE)
+                )
+                .orElse(false);
+    }
 }
