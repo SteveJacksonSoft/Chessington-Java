@@ -75,7 +75,7 @@ public class RookTest {
     public void rookCannotMoveToSpaceOccupiedByAlly() {
         Board board = Board.empty();
         Piece rook = new Rook(PlayerColour.WHITE, board);
-        Piece pawn = new Rook(PlayerColour.WHITE, board);
+        Piece pawn = new Pawn(PlayerColour.WHITE, board);
         Coordinates rookPosition = new Coordinates(5, 3);
         Coordinates pawnPosition = new Coordinates(1, 3);
         board.placePiece(rookPosition, rook);
@@ -105,7 +105,7 @@ public class RookTest {
     public void rookCannotPassThroughEnemies() {
         Board board = Board.empty();
         Piece rook = new Rook(PlayerColour.WHITE, board);
-        Piece pawn = new Rook(PlayerColour.BLACK, board);
+        Piece pawn = new Pawn(PlayerColour.BLACK, board);
         Coordinates rookPosition = new Coordinates(5, 3);
         Coordinates pawnPosition = new Coordinates(1, 3);
         board.placePiece(rookPosition, rook);
@@ -120,7 +120,7 @@ public class RookTest {
     public void rookCannotPassThroughAllies() {
         Board board = Board.empty();
         Piece rook = new Rook(PlayerColour.WHITE, board);
-        Piece pawn = new Rook(PlayerColour.WHITE, board);
+        Piece pawn = new Pawn(PlayerColour.WHITE, board);
         Coordinates rookPosition = new Coordinates(1, 5);
         Coordinates pawnPosition = new Coordinates(1, 3);
         board.placePiece(rookPosition, rook);

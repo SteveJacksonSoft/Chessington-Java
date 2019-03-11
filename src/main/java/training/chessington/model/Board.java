@@ -53,58 +53,6 @@ public class Board {
         board[coords.getRow()][coords.getCol()] = piece;
     }
 
-    public boolean moveIsBlocked(Move move) {
-        Function<Coordinates, Coordinates> directionalStep = this.calculateDirectionalStep(move.getFrom(), move.getTo());
-        return this.linearMoveIsBlocked(move, directionalStep);
-    }
-
-    private Function<Coordinates, Coordinates> calculateDirectionalStep(Coordinates start, Coordinates end) {
-        if (start.equals(end)) {
-            return (position) -> position;
-        } else if (start.getRow() == end.getRow()) {
-            int colDisplacement = end.getCol() - start.getCol();
-            int direction = colDisplacement / Math.abs(colDisplacement);
-            return (position) -> position.plus(0, direction);
-        } else if (start.getCol() == end.getCol()) {
-            int rowDisplacement =  end.getRow() - start.getRow();
-            int direction = rowDisplacement / Math.abs(rowDisplacement);
-            return (position) -> position.plus(direction, 0);
-        } else {
-            int rowDisplacement = end.getRow() - start.getRow();
-            int colDisplacement = end.getCol() - start.getCol();
-            int rowDirection = rowDisplacement / Math.abs(rowDisplacement);
-            int colDirection = colDisplacement / Math.abs(colDisplacement);
-            return (position) -> position.plus(rowDirection, colDirection);
-        }
-    }
-
-    private boolean linearMoveIsBlocked(Move move, Function<Coordinates, Coordinates> directionalStep) {
-        Coordinates endSquare = move.getTo();
-        Coordinates nextSquare = directionalStep.apply(move.getFrom());
-        while (!nextSquare.equals(endSquare) && this.contains(nextSquare)) {
-            if (this.get(nextSquare) != null) {
-                return true;
-            }
-            nextSquare = directionalStep.apply(nextSquare);
-        }
-        return false;
-    }
-
-    private boolean lateralMoveIsBlocked(int lineIndex, int fromIndex, int toIndex, boolean moveIsVertical) {
-        for (int spaceIndex = Math.min(fromIndex + 1, toIndex + 1); spaceIndex <= Math.max(toIndex - 1, fromIndex - 1); spaceIndex++) {
-            if (moveIsVertical) {
-                if (this.get(new Coordinates(spaceIndex, lineIndex)) != null) {
-                    return true;
-                }
-            } else {
-                if (this.get(new Coordinates(lineIndex, spaceIndex)) != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean contains(Coordinates position) {
         int row = position.getRow();
         int col = position.getCol();

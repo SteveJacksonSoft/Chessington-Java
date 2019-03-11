@@ -15,11 +15,23 @@ public class King extends AbstractPiece {
 
     @Override
     public List<Move> getAllowedMoves(Coordinates from) {
-        return new ArrayList<>();
+        List<Move> allowedMoves = new ArrayList<>();
+        for (int rowDiff = -1; rowDiff <= 1; rowDiff++) {
+            for (int colDiff = -1; colDiff <= 1; colDiff++) {
+                if ( (rowDiff != 0 || colDiff != 0)
+                        && this.squareIsValidDestination(from.plus(rowDiff, colDiff)) ) {
+                    allowedMoves.add(new Move(from, from.plus(rowDiff, colDiff)));
+                }
+            }
+        }
+        return allowedMoves;
     }
 
-    @Override
-    protected boolean moveIsValid(Move move) {
-        return true;
+    private boolean squareIsValidDestination(Coordinates square) {
+        try {
+            return !board.squareContainsAlly(square, super.colour);
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
     }
 }

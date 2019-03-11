@@ -1,9 +1,6 @@
 package training.chessington.model.pieces;
 
-import training.chessington.model.Board;
-import training.chessington.model.Coordinates;
-import training.chessington.model.Move;
-import training.chessington.model.PlayerColour;
+import training.chessington.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +13,8 @@ public class Rook extends AbstractPiece {
     @Override
     public List<Move> getAllowedMoves(Coordinates from) {
         List<Move> allowedMoves = new ArrayList<>();
-        allowedMoves.addAll(super.getVerticalMoves(from));
-        allowedMoves.addAll(super.getHorizontalMoves(from));
-        allowedMoves = super.removeInvalidMoves(allowedMoves);
+        allowedMoves.addAll(moveUtil.getVerticalMoves(from, super.colour));
+        allowedMoves.addAll(moveUtil.getHorizontalMoves(from, super.colour));
         return allowedMoves;
-    }
-
-    protected boolean moveIsValid(Move move) {
-        return !board.squareContainsAlly(move.getTo(), this.colour)
-                && !board.moveIsBlocked(move);
     }
 }

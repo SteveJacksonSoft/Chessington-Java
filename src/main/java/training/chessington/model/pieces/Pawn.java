@@ -1,9 +1,6 @@
 package training.chessington.model.pieces;
 
-import training.chessington.model.Board;
-import training.chessington.model.Coordinates;
-import training.chessington.model.Move;
-import training.chessington.model.PlayerColour;
+import training.chessington.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +34,7 @@ public class Pawn extends AbstractPiece {
     private Move getStandardMove(Coordinates currentSquare) {
         try {
             Coordinates squareInFront = this.nextSquareForward(currentSquare);
-            if (board.get(squareInFront) == null) {
+            if (super.board.get(squareInFront) == null) {
                 return new Move(currentSquare, squareInFront);
             } else {
                 return null;
@@ -52,37 +49,30 @@ public class Pawn extends AbstractPiece {
 
         if (this.colour == PlayerColour.WHITE && currentSquare.getRow() == 6) {
             destination = currentSquare.plus(-2, 0);
+            if (board.get(currentSquare.plus(-1, 0)) == null && board.get(destination) == null) {
+                return new Move(currentSquare, destination);
+            }
         } else if (this.colour == PlayerColour.BLACK && currentSquare.getRow() == 1) {
             destination = currentSquare.plus(2, 0);
-        } else { // Not on starting line
-            return null;
+            if (board.get(currentSquare.plus(1, 0)) == null && board.get(destination) == null) {
+                return new Move(currentSquare, destination);
+            }
         }
 
-        Move doubleMove = new Move(currentSquare, destination);
-        if (this.moveIsValid(doubleMove)) {
-            return doubleMove;
-        } else {
-            return null;
-        }
+        return null;
     }
 
     private List<Move> getAttackingMoves(Coordinates currentSquare) {
         List<Move> allowedMoves = new ArrayList<>();
         Coordinates squareInFront = this.nextSquareForward(currentSquare);
         try {
-            if (board.squareContainsEnemy(squareInFront.plus(0,1), this.colour)) {
+            if (super.board.squareContainsEnemy(squareInFront.plus(0,1), this.colour)) {
                 allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, 1)));
             }
-            if (board.squareContainsEnemy(squareInFront.plus(0,-1), this.colour)) {
+            if (super.board.squareContainsEnemy(squareInFront.plus(0,-1), this.colour)) {
                 allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, -1)));
             }
         } catch (IndexOutOfBoundsException e) {}
         return allowedMoves;
-    }
-
-    protected boolean moveIsValid(Move move) {
-        return !board.squareContainsAlly(move.getTo(), this.colour)
-                && !board.squareContainsEnemy(move.getTo(), this.colour)
-                && !board.moveIsBlocked(move);
     }
 }
