@@ -10,18 +10,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class Pawn extends AbstractPiece {
-    public Pawn(PlayerColour colour) {
-        super(Piece.PieceType.PAWN, colour);
+    public Pawn(PlayerColour colour, Board board) {
+        super(Piece.PieceType.PAWN, colour, board);
     }
 
     @Override
-    public List<Move> getAllowedMoves(Coordinates from, Board board) {
+    public List<Move> getAllowedMoves(Coordinates from) {
         List<Move> allowedMoves = new ArrayList<>();
 
-        Optional.ofNullable(this.getStandardMove(from, board))
+        Optional.ofNullable(this.getStandardMove(from))
                 .ifPresent(allowedMoves::add);
-        allowedMoves.addAll(this.getAttackingMoves(from, board));
-        Optional.ofNullable(this.getDoubleMove(from, board))
+        allowedMoves.addAll(this.getAttackingMoves(from));
+        Optional.ofNullable(this.getDoubleMove(from))
                 .ifPresent(allowedMoves::add);
         return allowedMoves;
     }
@@ -34,7 +34,7 @@ public class Pawn extends AbstractPiece {
         }
     }
 
-    private Move getStandardMove(Coordinates currentSquare, Board board) {
+    private Move getStandardMove(Coordinates currentSquare) {
         try {
             Coordinates squareInFront = this.nextSquareForward(currentSquare);
             if (board.get(squareInFront) == null) {
@@ -47,7 +47,7 @@ public class Pawn extends AbstractPiece {
         }
     }
 
-    private Move getDoubleMove(Coordinates currentSquare, Board board) {
+    private Move getDoubleMove(Coordinates currentSquare) {
         Coordinates destination;
 
         if (this.colour == PlayerColour.WHITE && currentSquare.getRow() == 6) {
@@ -59,14 +59,14 @@ public class Pawn extends AbstractPiece {
         }
 
         Move doubleMove = new Move(currentSquare, destination);
-        if (!board.moveIsBlocked(doubleMove)) {
+        if (this.moveIsValid(doubleMove)) {
             return doubleMove;
         } else {
             return null;
         }
     }
 
-    private List<Move> getAttackingMoves(Coordinates currentSquare, Board board) {
+    private List<Move> getAttackingMoves(Coordinates currentSquare) {
         List<Move> allowedMoves = new ArrayList<>();
         Coordinates squareInFront = this.nextSquareForward(currentSquare);
         try {
@@ -80,4 +80,9 @@ public class Pawn extends AbstractPiece {
         return allowedMoves;
     }
 
+    protected boolean moveIsValid(Move move) {
+        return !board.squareContainsAlly(move.getTo(), this.colour)
+                && !board.squareContainsEnemy(move.getTo(), this.colour)
+                && !board.moveIsBlocked(move);
+    }
 }

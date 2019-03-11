@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Knight extends AbstractPiece {
-    public Knight(PlayerColour colour) {
-        super(PieceType.KNIGHT, colour);
+    public Knight(PlayerColour colour, Board board) {
+        super(PieceType.KNIGHT, colour, board);
     }
 
     @Override
-    public List<Move> getAllowedMoves(Coordinates from, Board board) {
+    public List<Move> getAllowedMoves(Coordinates from) {
         List<Coordinates> validDestinations = Arrays.asList(
                 from.plus(2, 1),
                 from.plus(2, -1),
@@ -31,5 +31,10 @@ public class Knight extends AbstractPiece {
                 .filter(destination -> !board.squareContainsAlly(destination, this.colour))
                 .map(destination -> new Move(from, destination))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    protected boolean moveIsValid(Move move) {
+        return true;
     }
 }

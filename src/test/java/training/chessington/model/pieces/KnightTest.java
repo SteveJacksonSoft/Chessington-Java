@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static training.chessington.model.pieces.PieceAssert.*;
 import static org.assertj.core.api.Assertions.*;
 
 public class KnightTest {
@@ -18,11 +17,11 @@ public class KnightTest {
     @Test
     public void knightCanMoveToCorrect8SpacesWhenInCentreOfBoard() {
         Board board = Board.empty();
-        Piece knight = new Knight(PlayerColour.WHITE);
+        Piece knight = new Knight(PlayerColour.WHITE, board);
         Coordinates position = new Coordinates(4,4);
         board.placePiece(position, knight);
 
-        List<Move> moves = knight.getAllowedMoves(position, board);
+        List<Move> moves = knight.getAllowedMoves(position);
 
         List<Coordinates> correctDestinations = Arrays.asList(
                 new Coordinates(5, 2),
@@ -41,11 +40,11 @@ public class KnightTest {
     @Test
     public void knightCannotMoveOutsideOfLShape() {
         Board board = Board.empty();
-        Piece knight = new Knight(PlayerColour.WHITE);
+        Piece knight = new Knight(PlayerColour.WHITE, board);
         Coordinates position = new Coordinates(4,4);
         board.placePiece(position, knight);
 
-        List<Move> moves = knight.getAllowedMoves(position, board);
+        List<Move> moves = knight.getAllowedMoves(position);
 
         List<Coordinates> correctDestinations = Arrays.asList(
                 new Coordinates(5, 2),
@@ -64,25 +63,26 @@ public class KnightTest {
     @Test
     public void knightCannotMoveMoreThan2SpacesInOneDirection() {
         Board board = Board.empty();
-        Piece knight = new Knight(PlayerColour.WHITE);
-        Coordinates position = new Coordinates(7,4);
+        Piece knight = new Knight(PlayerColour.WHITE, board);
+        Coordinates position = new Coordinates(3,4);
         board.placePiece(position, knight);
 
-        List<Move> moves = knight.getAllowedMoves(position, board);
+        List<Move> moves = knight.getAllowedMoves(position);
 
         for (Move move: moves) {
-            assertThat(move.getTo().getRow()).isLessThan(8);
+            assertThat(move.getTo().getRow()).isBetween(1, 5);
+            assertThat(move.getTo().getCol()).isBetween(2, 6);
         }
     }
 
     @Test
     public void knightCannotMoveOffBoardWhenOnTheEdge() {
         Board board = Board.empty();
-        Piece knight = new Knight(PlayerColour.WHITE);
+        Piece knight = new Knight(PlayerColour.WHITE, board);
         Coordinates position = new Coordinates(7,4);
         board.placePiece(position, knight);
 
-        List<Move> moves = knight.getAllowedMoves(position, board);
+        List<Move> moves = knight.getAllowedMoves(position);
 
         for (Move move: moves) {
             assertThat(move.getTo().getRow()).isLessThan(8);
@@ -92,11 +92,11 @@ public class KnightTest {
     @Test
     public void knightCannotMoveOffBoardWhenNearCorner() {
         Board board = Board.empty();
-        Piece knight = new Knight(PlayerColour.WHITE);
+        Piece knight = new Knight(PlayerColour.WHITE, board);
         Coordinates position = new Coordinates(0,6);
         board.placePiece(position, knight);
 
-        List<Move> moves = knight.getAllowedMoves(position, board);
+        List<Move> moves = knight.getAllowedMoves(position);
 
         for (Move move: moves) {
             assertThat(move.getTo().getRow()).isGreaterThan(-1);
@@ -107,29 +107,29 @@ public class KnightTest {
     @Test
     public void knightCannotMoveToSquareOccupiedBySameColourPiece() {
         Board board = Board.empty();
-        Piece knight = new Knight(PlayerColour.WHITE);
+        Piece knight = new Knight(PlayerColour.WHITE, board);
         Coordinates knightPosition = new Coordinates(0,6);
-        Piece pawn = new Pawn(PlayerColour.WHITE);
+        Piece pawn = new Pawn(PlayerColour.WHITE, board);
         Coordinates pawnPosition = new Coordinates(2,5);
         board.placePiece(knightPosition, knight);
         board.placePiece(pawnPosition, pawn);
 
-        List<Move> moves = knight.getAllowedMoves(knightPosition, board);
+        List<Move> moves = knight.getAllowedMoves(knightPosition);
 
         assertThat(moves).doesNotContain(new Move(knightPosition, pawnPosition));
     }
 
     @Test
-    public void knightCannotMoveToSquareOccupiedByDifferentColourPiece() {
+    public void knightCanMoveToSquareOccupiedByDifferentColourPiece() {
         Board board = Board.empty();
-        Piece knight = new Knight(PlayerColour.WHITE);
+        Piece knight = new Knight(PlayerColour.WHITE, board);
         Coordinates knightPosition = new Coordinates(4,2);
-        Piece pawn = new Pawn(PlayerColour.BLACK);
+        Piece pawn = new Pawn(PlayerColour.BLACK, board);
         Coordinates pawnPosition = new Coordinates(5,0);
         board.placePiece(knightPosition, knight);
         board.placePiece(pawnPosition, pawn);
 
-        List<Move> moves = knight.getAllowedMoves(knightPosition, board);
+        List<Move> moves = knight.getAllowedMoves(knightPosition);
 
         assertThat(moves).contains(new Move(knightPosition, pawnPosition));
     }

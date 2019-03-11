@@ -3,6 +3,7 @@ package training.chessington.model;
 import training.chessington.model.pieces.*;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 public class Board {
 
@@ -17,8 +18,8 @@ public class Board {
         board.setBackRow(7, PlayerColour.WHITE);
 
         for (int col = 0; col < 8; col++) {
-            board.board[1][col] = new Pawn(PlayerColour.BLACK);
-            board.board[6][col] = new Pawn(PlayerColour.WHITE);
+            board.board[1][col] = new Pawn(PlayerColour.BLACK, board);
+            board.board[6][col] = new Pawn(PlayerColour.WHITE, board);
         }
 
         return board;
@@ -29,14 +30,14 @@ public class Board {
     }
 
     private void setBackRow(int rowIndex, PlayerColour colour) {
-        board[rowIndex][0] = new Rook(colour);
-        board[rowIndex][1] = new Knight(colour);
-        board[rowIndex][2] = new Bishop(colour);
-        board[rowIndex][3] = new Queen(colour);
-        board[rowIndex][4] = new King(colour);
-        board[rowIndex][5] = new Bishop(colour);
-        board[rowIndex][6] = new Knight(colour);
-        board[rowIndex][7] = new Rook(colour);
+        board[rowIndex][0] = new Rook(colour, this);
+        board[rowIndex][1] = new Knight(colour, this);
+        board[rowIndex][2] = new Bishop(colour, this);
+        board[rowIndex][3] = new Queen(colour, this);
+        board[rowIndex][4] = new King(colour, this);
+        board[rowIndex][5] = new Bishop(colour, this);
+        board[rowIndex][6] = new Knight(colour, this);
+        board[rowIndex][7] = new Rook(colour, this);
     }
 
     public Piece get(Coordinates coords) {
@@ -53,27 +54,44 @@ public class Board {
     }
 
     public boolean moveIsBlocked(Move move) {
-        
-        int fromRow = move.getFrom().getRow();
-        int fromCol = move.getFrom().getCol();
-        int toRow = move.getTo().getRow();
-        int toCol = move.getTo().getCol();
-        
-        boolean isHorizontal = fromRow == toRow;
-        boolean isVertical = fromCol == toCol;
-        boolean isDiagonal = (fromRow - toRow) == (fromCol - toCol);
-        
-        if (isHorizontal) {
-            return linearMoveIsBlocked(fromRow, fromCol, toCol, false);
-        } else if (isVertical) {
-            return linearMoveIsBlocked(fromCol, fromRow, toRow, true);
+        Function<Coordinates, Coordinates> directionalStep = this.calculateDirectionalStep(move.getFrom(), move.getTo());
+        return this.linearMoveIsBlocked(move, directionalStep);
+    }
+
+    private Function<Coordinates, Coordinates> calculateDirectionalStep(Coordinates start, Coordinates end) {
+        if (start.equals(end)) {
+            return (position) -> position;
+        } else if (start.getRow() == end.getRow()) {
+            int colDisplacement = end.getCol() - start.getCol();
+            int direction = colDisplacement / Math.abs(colDisplacement);
+            return (position) -> position.plus(0, direction);
+        } else if (start.getCol() == end.getCol()) {
+            int rowDisplacement =  end.getRow() - start.getRow();
+            int direction = rowDisplacement / Math.abs(rowDisplacement);
+            return (position) -> position.plus(direction, 0);
+        } else {
+            int rowDisplacement = end.getRow() - start.getRow();
+            int colDisplacement = end.getCol() - start.getCol();
+            int rowDirection = rowDisplacement / Math.abs(rowDisplacement);
+            int colDirection = colDisplacement / Math.abs(colDisplacement);
+            return (position) -> position.plus(rowDirection, colDirection);
         }
-        // else if (isDiagonal) {...}
+    }
+
+    private boolean linearMoveIsBlocked(Move move, Function<Coordinates, Coordinates> directionalStep) {
+        Coordinates endSquare = move.getTo();
+        Coordinates nextSquare = directionalStep.apply(move.getFrom());
+        while (!nextSquare.equals(endSquare) && this.contains(nextSquare)) {
+            if (this.get(nextSquare) != null) {
+                return true;
+            }
+            nextSquare = directionalStep.apply(nextSquare);
+        }
         return false;
     }
 
-    private boolean linearMoveIsBlocked(int lineIndex, int fromIndex, int toIndex, boolean moveIsVertical) {
-        for (int spaceIndex = Math.min(fromIndex + 1, toIndex); spaceIndex <= Math.max(toIndex, fromIndex - 1); spaceIndex++) {
+    private boolean lateralMoveIsBlocked(int lineIndex, int fromIndex, int toIndex, boolean moveIsVertical) {
+        for (int spaceIndex = Math.min(fromIndex + 1, toIndex + 1); spaceIndex <= Math.max(toIndex - 1, fromIndex - 1); spaceIndex++) {
             if (moveIsVertical) {
                 if (this.get(new Coordinates(spaceIndex, lineIndex)) != null) {
                     return true;

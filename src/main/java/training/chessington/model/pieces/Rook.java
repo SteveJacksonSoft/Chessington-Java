@@ -9,12 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rook extends AbstractPiece {
-    public Rook(PlayerColour colour) {
-        super(PieceType.ROOK, colour);
+    public Rook(PlayerColour colour, Board board) {
+        super(PieceType.ROOK, colour, board);
     }
 
     @Override
-    public List<Move> getAllowedMoves(Coordinates from, Board board) {
-        return new ArrayList<>();
+    public List<Move> getAllowedMoves(Coordinates from) {
+        List<Move> allowedMoves = new ArrayList<>();
+        allowedMoves.addAll(super.getVerticalMoves(from));
+        allowedMoves.addAll(super.getHorizontalMoves(from));
+        allowedMoves = super.removeInvalidMoves(allowedMoves);
+        return allowedMoves;
+    }
+
+    protected boolean moveIsValid(Move move) {
+        return !board.squareContainsAlly(move.getTo(), this.colour)
+                && !board.moveIsBlocked(move);
     }
 }

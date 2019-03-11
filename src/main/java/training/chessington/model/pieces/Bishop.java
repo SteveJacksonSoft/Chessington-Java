@@ -9,12 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bishop extends AbstractPiece {
-    public Bishop(PlayerColour colour) {
-        super(PieceType.BISHOP, colour);
+    public Bishop(PlayerColour colour, Board board) {
+        super(PieceType.BISHOP, colour, board);
     }
 
     @Override
-    public List<Move> getAllowedMoves(Coordinates from, Board board) {
+    public List<Move> getAllowedMoves(Coordinates from) {
         return new ArrayList<>();
+    }
+
+    @Override
+    protected boolean moveIsValid(Move move) {
+        return true;
     }
 }
