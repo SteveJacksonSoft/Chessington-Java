@@ -31,7 +31,7 @@ public class Game {
             return new ArrayList<>();
         }
 
-        return piece.getAllowedMoves(from, board);
+        return piece.getAllowedMoves(from);
     }
 
     public void makeMove(Move move) throws InvalidMoveException {
@@ -51,7 +51,7 @@ public class Game {
             throw new InvalidMoveException(String.format("Wrong colour piece - it is %s's turn", nextPlayer));
         }
 
-        if (!piece.getAllowedMoves(move.getFrom(), board).contains(move)) {
+        if (!piece.getAllowedMoves(move.getFrom()).contains(move)) {
             throw new InvalidMoveException(String.format("Cannot move piece %s from %s to %s", piece, from, to));
         }
 

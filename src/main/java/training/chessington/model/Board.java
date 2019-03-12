@@ -2,6 +2,9 @@ package training.chessington.model;
 
 import training.chessington.model.pieces.*;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 public class Board {
 
     private Piece[][] board = new Piece[8][8];
@@ -15,8 +18,8 @@ public class Board {
         board.setBackRow(7, PlayerColour.WHITE);
 
         for (int col = 0; col < 8; col++) {
-            board.board[1][col] = new Pawn(PlayerColour.BLACK);
-            board.board[6][col] = new Pawn(PlayerColour.WHITE);
+            board.board[1][col] = new Pawn(PlayerColour.BLACK, board);
+            board.board[6][col] = new Pawn(PlayerColour.WHITE, board);
         }
 
         return board;
@@ -27,14 +30,14 @@ public class Board {
     }
 
     private void setBackRow(int rowIndex, PlayerColour colour) {
-        board[rowIndex][0] = new Rook(colour);
-        board[rowIndex][1] = new Knight(colour);
-        board[rowIndex][2] = new Bishop(colour);
-        board[rowIndex][3] = new Queen(colour);
-        board[rowIndex][4] = new King(colour);
-        board[rowIndex][5] = new Bishop(colour);
-        board[rowIndex][6] = new Knight(colour);
-        board[rowIndex][7] = new Rook(colour);
+        board[rowIndex][0] = new Rook(colour, this);
+        board[rowIndex][1] = new Knight(colour, this);
+        board[rowIndex][2] = new Bishop(colour, this);
+        board[rowIndex][3] = new Queen(colour, this);
+        board[rowIndex][4] = new King(colour, this);
+        board[rowIndex][5] = new Bishop(colour, this);
+        board[rowIndex][6] = new Knight(colour, this);
+        board[rowIndex][7] = new Rook(colour, this);
     }
 
     public Piece get(Coordinates coords) {
@@ -50,4 +53,21 @@ public class Board {
         board[coords.getRow()][coords.getCol()] = piece;
     }
 
+    public boolean contains(Coordinates position) {
+        int row = position.getRow();
+        int col = position.getCol();
+        return 0 <= row && row < 8 && 0 <= col && col < 8;
+    }
+
+    public boolean squareContainsEnemy(Coordinates square, PlayerColour colour) throws IndexOutOfBoundsException {
+        return Optional.ofNullable(get(square))
+                .map(piece -> piece.getColour() != colour)
+                .orElse(false);
+    }
+
+    public boolean squareContainsAlly(Coordinates square, PlayerColour colour) throws IndexOutOfBoundsException {
+        return Optional.ofNullable(get(square))
+                .map(piece -> piece.getColour() == colour)
+                .orElse(false);
+    }
 }
