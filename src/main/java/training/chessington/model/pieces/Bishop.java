@@ -12,6 +12,6 @@ public class Bishop extends AbstractPiece {
 
     @Override
     public List<Move> getAllowedMoves(Coordinates from) {
-        return new ArrayList<>(moveUtil.getDiagonalMoves(from, super.colour));
+        return new ArrayList<>(moveUtil.getDiagonalMoves(from, colour));
     }
 }

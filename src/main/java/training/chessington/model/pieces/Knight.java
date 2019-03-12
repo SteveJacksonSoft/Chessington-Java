@@ -24,8 +24,8 @@ public class Knight extends AbstractPiece {
                 from.plus(-2, -1)
         );
         return validDestinations.stream()
-                .filter(super.board::contains)
-                .filter(destination -> !super.board.squareContainsAlly(destination, this.colour))
+                .filter(board::contains)
+                .filter(destination -> !board.squareContainsAlly(destination, this.colour))
                 .map(destination -> new Move(from, destination))
                 .collect(Collectors.toList());
     }

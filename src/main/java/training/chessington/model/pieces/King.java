@@ -29,7 +29,7 @@ public class King extends AbstractPiece {
 
     private boolean squareIsValidDestination(Coordinates square) {
         try {
-            return !board.squareContainsAlly(square, super.colour);
+            return !board.squareContainsAlly(square, colour);
         } catch (IndexOutOfBoundsException e) {
             return false;
         }

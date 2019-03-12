@@ -9,6 +9,7 @@ import training.chessington.model.PlayerColour;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static training.chessington.model.pieces.PieceAssert.*;
 import static org.assertj.core.api.Assertions.*;
@@ -21,15 +22,18 @@ public class KingTest {
         King king = new King(PlayerColour.WHITE, board);
         Coordinates kingPosition = new Coordinates(4, 4);
         board.placePiece(kingPosition, king);
-        List<Move> validMoves = new ArrayList<>();
-
-        for (int row = 3; row <= 5; row++) {
-            for (int col = 3; col <= 5; col++) {
-                if (row != 4 || col != 4) {
-                    validMoves.add(new Move(kingPosition, new Coordinates(row, col)));
-                }
-            }
-        }
+        List<Move> validMoves = Arrays.stream(new Coordinates[] {
+                new Coordinates(3, 3),
+                new Coordinates(4, 3),
+                new Coordinates(5, 3),
+                new Coordinates(3, 4),
+                new Coordinates(5, 4),
+                new Coordinates(3, 5),
+                new Coordinates(4, 5),
+                new Coordinates(5, 5)
+        })
+                .map(destination -> new Move(kingPosition, destination))
+                .collect(Collectors.toList());
 
         List<Move> moves = king.getAllowedMoves(kingPosition);
 

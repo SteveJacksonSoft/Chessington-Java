@@ -34,7 +34,7 @@ public class Pawn extends AbstractPiece {
     private Move getStandardMove(Coordinates currentSquare) {
         try {
             Coordinates squareInFront = this.nextSquareForward(currentSquare);
-            if (super.board.get(squareInFront) == null) {
+            if (board.get(squareInFront) == null) {
                 return new Move(currentSquare, squareInFront);
             } else {
                 return null;
@@ -66,10 +66,10 @@ public class Pawn extends AbstractPiece {
         List<Move> allowedMoves = new ArrayList<>();
         Coordinates squareInFront = this.nextSquareForward(currentSquare);
         try {
-            if (super.board.squareContainsEnemy(squareInFront.plus(0,1), this.colour)) {
+            if (board.squareContainsEnemy(squareInFront.plus(0,1), this.colour)) {
                 allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, 1)));
             }
-            if (super.board.squareContainsEnemy(squareInFront.plus(0,-1), this.colour)) {
+            if (board.squareContainsEnemy(squareInFront.plus(0,-1), this.colour)) {
                 allowedMoves.add(new Move(currentSquare, squareInFront.plus(0, -1)));
             }
         } catch (IndexOutOfBoundsException e) {}
